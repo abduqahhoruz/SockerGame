@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'androidx.navigation.safeargs.kotlin'
 }
 
 android {
@@ -63,6 +64,10 @@ dependencies {
     //viewBindingDelegate
     implementation 'com.github.kirich1409:viewbindingpropertydelegate:1.5.6'
 
+    //RxBinding
+    /*rxBinding*/
+    def rxbinding_version = "4.0.0"
+    implementation "com.jakewharton.rxbinding4:rxbinding:$rxbinding_version"
 
 
 

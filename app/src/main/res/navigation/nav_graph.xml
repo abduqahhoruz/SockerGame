@@ -24,5 +24,21 @@
         <action
             android:id="@+id/action_GameFragment_to_StartFragment"
             app:destination="@id/StartFragment" />
+        <argument
+            android:name="match_time"
+            android:defaultValue="0"
+            app:nullable="false"
+            app:argType="integer" />
+        <argument
+            android:name="team1"
+            app:nullable="false"
+            android:defaultValue="0"
+            app:argType="string" />
+        <argument
+            android:name="team2"
+            app:nullable="false"
+            android:defaultValue="0"
+            app:argType="string" />
+
     </fragment>
 </navigation>
