@@ -1,29 +1,30 @@
 package uz.harmonic.sockergame
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+const val FIRST_PLAYER_WINS_CODE = 1
+const val SECOND_PLAYER_WINS_CODE = 2
+const val DURRANG_CODE = 3
+
 class GameViewModel : ViewModel() {
-    private val _tickState = SingleLiveEvent<Long>()
-    val tickState: LiveData<Long> get() = _tickState
 
-    private val _team1Score = SingleLiveEvent<Int>()
-    val team1Score: LiveData<Int> get() = _team1Score
+    private val _tickState = MutableStateFlow<Long>(0)
+    val tickState = _tickState.asStateFlow()
 
-    private val _team2Score = SingleLiveEvent<Int>()
-    val team2Score: LiveData<Int> get() = _team2Score
+    private val _team1Score = MutableStateFlow<Int>(0)
+    val team1Score = _team1Score.asStateFlow()
 
-    private val _winnerCode = SingleLiveEvent<Int>()
-    val winnerCode: LiveData<Int> get() = _winnerCode
+    private val _team2Score = MutableStateFlow<Int>(0)
+    val team2Score = _team2Score.asStateFlow()
 
-    init {
-        _team1Score.postValue(0)
-        _team2Score.postValue(0)
-    }
+    private val _winnerCode = MutableStateFlow<Int>(0)
+    val winnerCode = _winnerCode.asStateFlow()
 
     private var job: Job? = null
     fun tick(millisInFuture: Long, countDownInterval: Long) {
@@ -31,11 +32,11 @@ class GameViewModel : ViewModel() {
         job = viewModelScope.launch {
             var max = millisInFuture
             while (max > 0) {
-                _tickState.postValue(max)
+                _tickState.value = max
                 delay(countDownInterval)
                 max -= countDownInterval
             }
-            _tickState.postValue(-1L)
+            _tickState.value = (-1L)
         }
     }
 
@@ -44,20 +45,20 @@ class GameViewModel : ViewModel() {
     }
 
     fun scoreToTeam1() {
-        _team1Score.postValue((team1Score.value ?: 0) + 1)
+        _team1Score.value = (team1Score.value + 1)
     }
 
     fun scoreToTeam2() {
-        _team2Score.postValue((team2Score.value ?: 0) + 1)
+        _team2Score.value = (team2Score.value + 1)
     }
 
     fun showWinner() {
-        if ((team1Score.value ?: 0) > (team2Score.value ?: 0)) {
-            _winnerCode.postValue(1)
-        } else if ((team1Score.value ?: 0) < (team2Score.value ?: 0)) {
-            _winnerCode.postValue(2)
+        if (team1Score.value > team2Score.value) {
+            _winnerCode.value = (FIRST_PLAYER_WINS_CODE)
+        } else if (team1Score.value < team2Score.value) {
+            _winnerCode.value = (SECOND_PLAYER_WINS_CODE)
         } else {
-            _winnerCode.postValue(0)
+            _winnerCode.value = (DURRANG_CODE)
         }
     }
 }
